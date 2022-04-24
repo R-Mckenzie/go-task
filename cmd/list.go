@@ -8,6 +8,12 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const colorReset = "\033[0m"
+const colorRed = "\033[31m"
+const colorGreen = "\033[32m"
+const colorWhite = "\033[37m"
+const bold = "\033[1m"
+
 // listCmd represents the list command
 var listCmd = &cobra.Command{
 	Use:   "list",
@@ -20,7 +26,7 @@ var listCmd = &cobra.Command{
 		}
 
 		for i, task := range tasks {
-			fmt.Printf("%d) %s\n", i+1, task.Title)
+			fmt.Printf("%s%s %d) %s\n%s    - %s\n", bold, colorWhite, i+1, task.Title, colorReset, task.Desc)
 		}
 	},
 }
