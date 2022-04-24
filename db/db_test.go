@@ -1,13 +1,36 @@
-package db_test
+package db
 
-import "testing"
+import (
+	"encoding/json"
+	"fmt"
+	"testing"
+	"time"
+)
 
-func TestDB(t *testing.T) {
-	t.Run("Can load tasks", func(t *testing.T) {
+//func TestDB(t *testing.T) {
+//	// INTEGRATION TESTS
+//	db := openDb()
+//
+//	task := Task{"Test task", "Description", time.Now().Truncate(time.Second), time.Now().Truncate(time.Second)}
+//	task.Save(db)
+//	tasks, err := LoadTasks(db)
+//
+//	if err != nil {
+//		t.Fatal("did not expect error")
+//	}
+//	if tasks[len(tasks)-1] != task {
+//		t.Errorf("expected %v, got %v", task, tasks[0])
+//	}
+//}
 
-	})
+func TestDecode(t *testing.T) {
+	task := Task{"Test task", "Description", time.Now().Truncate(time.Second), time.Now().Truncate(time.Second)}
+	jsonStr, _ := json.Marshal(task)
+	fmt.Printf("json: %s", jsonStr)
+	result := decodeJSON(jsonStr)
+	fmt.Printf("result: %s", result)
 
-	t.Run("can save tasks", func(t *testing.T) {
-
-	})
+	if result != task {
+		t.Errorf("wanted %+v, got %+v", task, result)
+	}
 }

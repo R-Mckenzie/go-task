@@ -2,17 +2,26 @@ package cmd
 
 import (
 	"fmt"
+	"log"
 
+	"github.com/R-Mckenzie/gotask-cli/db"
 	"github.com/spf13/cobra"
 )
 
 // listCmd represents the list command
 var listCmd = &cobra.Command{
 	Use:   "list",
-	Short: "A brief description of your command",
+	Short: "list all active tasks",
 
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("list called")
+		tasks, err := db.LoadTasks()
+		if err != nil {
+			log.Fatal("Could not load tasks")
+		}
+
+		for i, task := range tasks {
+			fmt.Printf("%d) %s\n", i+1, task.Title)
+		}
 	},
 }
 
