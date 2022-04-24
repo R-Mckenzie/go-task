@@ -3,6 +3,7 @@ package db
 import (
 	"encoding/binary"
 	"encoding/json"
+	"fmt"
 	"log"
 	"os"
 	"time"
@@ -11,6 +12,7 @@ import (
 )
 
 type Task struct {
+	Id    uint64
 	Title string    `json:"title"`
 	Desc  string    `json:"desc"`
 	Start time.Time `json:"start"`
@@ -31,11 +33,20 @@ func openDb() *bolt.DB {
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	db.Update(func(tx *bolt.Tx) error {
+		_, err := tx.CreateBucketIfNotExists([]byte(bucketName))
+		if err != nil {
+			return err
+		}
+		return nil
+	})
 	return db
 }
 
 func LoadTasks() ([]Task, error) {
 	db := openDb()
+	defer db.Close()
 	tasks := []Task{}
 	err := db.View(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte(bucketName))
@@ -51,14 +62,35 @@ func LoadTasks() ([]Task, error) {
 
 func Save(t Task) error {
 	db := openDb()
+	defer db.Close()
 	return db.Update(func(tx *bolt.Tx) error {
-		bucket, err := tx.CreateBucketIfNotExists([]byte(bucketName))
+		bucket := tx.Bucket([]byte(bucketName))
+		taskID, _ := bucket.NextSequence()
+		t.Id = taskID
+		fmt.Printf("%v\n", taskID)
+		encoded, err := json.Marshal(&t)
 		if err != nil {
 			return err
 		}
-		taskID, _ := bucket.NextSequence()
-		encoded, err := json.Marshal(&t)
-		return bucket.Put([]byte(itob(int(taskID))), encoded)
+		return bucket.Put([]byte(itob(t.Id)), encoded)
+	})
+}
+
+func Delete(id int) error {
+	db := openDb()
+	defer db.Close()
+	fmt.Printf("%v\n", id)
+	return db.Update(func(tx *bolt.Tx) error {
+		b := tx.Bucket([]byte(bucketName))
+		count := 0
+		return b.ForEach(func(k, v []byte) error {
+			if count == id-1 {
+				b.Delete(k)
+				return nil
+			}
+			count++
+            return fmt.Errorf("Task to delete not found")
+		})
 	})
 }
 
@@ -70,7 +102,7 @@ func decodeJSON(jsonStr []byte) Task {
 	return task
 }
 
-func itob(v int) []byte {
+func itob(v uint64) []byte {
 	b := make([]byte, 8)
 	binary.BigEndian.PutUint64(b, uint64(v))
 	return b

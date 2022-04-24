@@ -25,8 +25,12 @@ var listCmd = &cobra.Command{
 			log.Fatal("Could not load tasks")
 		}
 
-		for i, task := range tasks {
-			fmt.Printf("%s%s %d) %s\n%s    - %s\n", bold, colorWhite, i+1, task.Title, colorReset, task.Desc)
+		if len(tasks) == 0 {
+			fmt.Println("No active tasks")
+		} else {
+			for i, task := range tasks {
+				fmt.Printf("%s%s %d) %s\n%s    - %s\n", bold, colorWhite, i+1, task.Title, colorReset, task.Desc)
+			}
 		}
 	},
 }
