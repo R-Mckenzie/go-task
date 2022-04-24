@@ -7,21 +7,20 @@ import (
 	"time"
 )
 
-//func TestDB(t *testing.T) {
-//	// INTEGRATION TESTS
-//	db := openDb()
-//
-//	task := Task{"Test task", "Description", time.Now().Truncate(time.Second), time.Now().Truncate(time.Second)}
-//	task.Save(db)
-//	tasks, err := LoadTasks(db)
-//
-//	if err != nil {
-//		t.Fatal("did not expect error")
-//	}
-//	if tasks[len(tasks)-1] != task {
-//		t.Errorf("expected %v, got %v", task, tasks[0])
-//	}
-//}
+func TestDB(t *testing.T) {
+	// INTEGRATION TESTS
+	task := Task{"Test task", "Description", time.Now().Truncate(time.Second), time.Now().Truncate(time.Second)}
+	Save(task)
+	tasks, err := LoadTasks()
+
+	if err != nil {
+		t.Fatal("did not expect error")
+	}
+
+	if tasks[len(tasks)-1] != task {
+		t.Errorf("expected %v, got %v", task, tasks[0])
+	}
+}
 
 func TestDecode(t *testing.T) {
 	task := Task{"Test task", "Description", time.Now().Truncate(time.Second), time.Now().Truncate(time.Second)}
