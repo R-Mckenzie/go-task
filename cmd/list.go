@@ -17,7 +17,7 @@ const bold = "\033[1m"
 // listCmd represents the list command
 var listCmd = &cobra.Command{
 	Use:   "list",
-	Short: "list all active tasks",
+	Short: "list all active tasks. This is the default functionality if no commands are given",
 
 	Run: func(cmd *cobra.Command, args []string) {
 		tasks, err := db.LoadTasks()

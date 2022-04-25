@@ -20,12 +20,14 @@ var doCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		delId, err := strconv.ParseInt(args[0], 10, 0)
 		if err != nil {
-			fmt.Print(err)
+			fmt.Print("Please enter the number of a task from your list\n")
+			return
 		}
 		err = db.Delete(int(delId))
 		if err != nil {
 			fmt.Print(err)
 		}
+		fmt.Printf("completed task %d\n", delId)
 	},
 }
 

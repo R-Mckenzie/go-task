@@ -15,6 +15,7 @@ var addCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) == 0 {
 			fmt.Println("Please enter a task")
+			return
 		}
 
 		if len(args) == 1 {
@@ -23,7 +24,7 @@ var addCmd = &cobra.Command{
 
 		task := db.Task{Title: args[0], Desc: args[1]}
 		db.Save(task)
-		fmt.Printf("added task %q\n", task.Title)
+		fmt.Printf("added: %q\n", task.Title)
 	},
 }
 
