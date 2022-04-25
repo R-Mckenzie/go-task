@@ -9,7 +9,7 @@ import (
 
 func TestDB(t *testing.T) {
 	// INTEGRATION TESTS
-	task := Task{"Test task", "Description", time.Now().Truncate(time.Second), time.Now().Truncate(time.Second)}
+	task := Task{Title: "Test task", Desc: "Description"}
 	Save(task)
 	tasks, err := LoadTasks()
 
@@ -23,7 +23,7 @@ func TestDB(t *testing.T) {
 }
 
 func TestDecode(t *testing.T) {
-	task := Task{"Test task", "Description", time.Now().Truncate(time.Second), time.Now().Truncate(time.Second)}
+	task := Task{Title: "Test task", Desc: "Description"}
 	jsonStr, _ := json.Marshal(task)
 	fmt.Printf("json: %s", jsonStr)
 	result := decodeJSON(jsonStr)

@@ -22,9 +22,8 @@ var addCmd = &cobra.Command{
 		}
 
 		task := db.Task{Title: args[0], Desc: args[1]}
-		// validation
 		db.Save(task)
-		fmt.Printf("saved task %q\n", task.Title)
+		fmt.Printf("added task %q\n", task.Title)
 	},
 }
 

@@ -6,17 +6,14 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"time"
 
 	"github.com/boltdb/bolt"
 )
 
 type Task struct {
 	Id    uint64
-	Title string    `json:"title"`
-	Desc  string    `json:"desc"`
-	Start time.Time `json:"start"`
-	End   time.Time `json:"end"`
+	Title string `json:"title"`
+	Desc  string `json:"desc"`
 }
 
 const databasePath = "/.cache/gotask"
@@ -50,12 +47,11 @@ func LoadTasks() ([]Task, error) {
 	tasks := []Task{}
 	err := db.View(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte(bucketName))
-		err := b.ForEach(func(k, v []byte) error {
+		return b.ForEach(func(k, v []byte) error {
 			task := decodeJSON(v)
 			tasks = append(tasks, task)
 			return nil
 		})
-		return err
 	})
 	return tasks, err
 }
