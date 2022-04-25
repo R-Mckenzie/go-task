@@ -13,6 +13,14 @@ var addCmd = &cobra.Command{
 	Short: "add a task to the task list",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
+		if len(args) == 0 {
+			fmt.Println("Please enter a task")
+		}
+
+		if len(args) == 1 {
+			args = append(args, "No description provided")
+		}
+
 		task := db.Task{Title: args[0], Desc: args[1]}
 		// validation
 		db.Save(task)
