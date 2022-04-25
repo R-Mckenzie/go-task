@@ -65,9 +65,7 @@ func Save(t Task) error {
 	defer db.Close()
 	return db.Update(func(tx *bolt.Tx) error {
 		bucket := tx.Bucket([]byte(bucketName))
-		taskID, _ := bucket.NextSequence()
-		t.Id = taskID
-		fmt.Printf("%v\n", taskID)
+		t.Id, _ = bucket.NextSequence()
 		encoded, err := json.Marshal(&t)
 		if err != nil {
 			return err
@@ -79,18 +77,18 @@ func Save(t Task) error {
 func Delete(id int) error {
 	db := openDb()
 	defer db.Close()
-	fmt.Printf("%v\n", id)
 	return db.Update(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte(bucketName))
-		count := 0
-		return b.ForEach(func(k, v []byte) error {
-			if count == id-1 {
-				b.Delete(k)
-				return nil
+		c := b.Cursor()
+
+		c.First()
+		for i := 0; i < id-1; i++ {
+			k, _ := c.Next()
+			if k == nil {
+				return fmt.Errorf("Task %d does not exist", id)
 			}
-			count++
-            return fmt.Errorf("Task to delete not found")
-		})
+		}
+		return c.Delete()
 	})
 }
 
